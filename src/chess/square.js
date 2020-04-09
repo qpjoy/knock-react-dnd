@@ -1,24 +1,30 @@
-import React from 'react';
-import PropTypes from 'prop-types'
-import styled from 'styled-components';
+import React, { Component, PropTypes } from 'react';
 
-const StyledDiv = styled.div`
-  background-color: ${ props => props.black ? 'black' : 'white' };
-  color: ${ props => props.black ? 'white' : 'black' };
-  width: 100%;
-  height: 100%;
-  min-height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+class Square extends Component {
+  constructor(props) {
+    super(props);
+  }
 
-const Square = ({ black, children }) => {
-  return <StyledDiv black={ black }> { children } </StyledDiv> 
+  render() {
+    const { black } = this.props;
+    const fill = black ? 'black' : 'white';
+    const color = black ? 'white' : 'black';
+    const style = {
+      backgroundColor: fill,
+      color: color,
+      width: '100%',
+      height: '100px',
+      fontSize: '100px',
+    };
+
+    return (
+      <div style={ style }>{ this.props.children }</div>
+    );
+  }
 }
 
 Square.propTypes = {
-  black: PropTypes.bool
-}
+  black: PropTypes.bool,
+};
 
 export default Square;

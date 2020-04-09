@@ -19,12 +19,7 @@ export default class BoardContainer extends React.Component {
 
   render() {    
     return (
-      <div>
-          123
-        <h1>Chess</h1>
-        <p> Based on the official React DnD
-          <a href={ "http://react-dnd.github.io/react-dnd/docs-tutorial.html"} target="_blank"> tutorial</a> 
-        </p>
+      <div>        
         <Board knightPosition={this.state.knightPosition} />
       </div>
     );

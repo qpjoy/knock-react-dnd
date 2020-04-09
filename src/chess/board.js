@@ -1,36 +1,23 @@
-import React from 'react';
-import PropTypes from 'prop-types'
-
-// import { DragDropContext } from 'react-dnd';
-import { DndProvider } from "react-dnd";
+import React, { Component, PropTypes } from 'react';
+import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
+import Square from '../Square/Square';
+import Knight from '../Knight/Knight';
+import BoardSquare from '../../containers/BoardSquare/BoardSquare';
+import { canMoveKnight, moveKnight } from '../../Game';
 
-// import Link from 'gatsby-link';
-
-import Knight from './knight';
-import BoardSquare from './board_square';
-import { moveKnight, canMoveKnight } from './game';
-
-import styled from 'styled-components';
-
-const StyledDiv = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-wrap: wrap;
-`;
-
-class Board extends React.Component {
-  static propTypes = {
-    knightPosition: PropTypes.arrayOf(
-      PropTypes.number.isRequired
-    ).isRequired
+class Board extends Component {
+  constructor(props) {
+    super(props);
   }
 
-  handleSquareClick(toX, toY) {
-    if (canMoveKnight(toX, toY)) {
-      moveKnight(toX, toY);
-    }
+  handleSquareClick(x, y) {
+    if (canMoveKnight(x, y)) moveKnight(x, y);
+  }
+
+  renderPiece(x, y) {
+    const [knightX, knightY] = this.props.knightPosition;
+    if (x === knightX && y === knightY) return <Knight />;
   }
 
   renderSquare(i) {
@@ -38,49 +25,38 @@ class Board extends React.Component {
     const y = Math.floor(i / 8);
 
     return (
-      <div key={i}
-           style={{ width: '12.5%', height: '12.5%' }}>
-        <BoardSquare x={x}
-                     y={y}>
-          {this.renderPiece(x, y)}
+      <div key={i} style={{ width: '12.5%', height: '12.5%'}}>
+        <BoardSquare x={x} y={y}>
+          { this.renderPiece(x, y) }
         </BoardSquare>
       </div>
     );
   }
 
-  renderPiece(x, y) {
-    const [knightX, knightY] = this.props.knightPosition;
-
-    if (x === knightX && y === knightY) {
-      return <Knight />;
-    }
-  }
-
   render() {
-    const squares = Array(64).fill().map((_, i) => this.renderSquare(i));
+    const squares = [];
+    for (let i = 0; i < 64; i++) {
+      squares.push(this.renderSquare(i));
+    }
 
     return (
-      <StyledDiv>
+      <div style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexWrap: 'wrap'
+        }}
+      >
         {squares}
-      </StyledDiv>
+      </div>
     );
   }
 }
 
-
-// DragDropContext(HTML5Backend)
-
-/* 
-  This is the top level component for your feature. 
-  We're specifying the HTML5 Drag and Drop API, as opposed to another 3rd party backend, such as touch
-*/ 
-// export default DragDropContext(HTML5Backend)(Board);
-const withDragDropContext = (Component) =>
-{
-    return (props: TProps) => (
-        <DndProvider backend={HTML5Backend}>
-            <Component {...props} />
-        </DndProvider>
-    );
+Board.propTypes = {
+  knightPosition: PropTypes.arrayOf(
+    PropTypes.number.isRequired
+  ).isRequired,
 };
-export default withDragDropContext(Board);
+
+export default DragDropContext(HTML5Backend)(Board);
